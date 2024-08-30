@@ -1,24 +1,55 @@
 import { FC, useMemo } from 'react';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
+import { useDispatch, useSelector } from '../../services/store';
+import { useNavigate } from 'react-router-dom';
+import {
+  burgerConstructorActions,
+  burgerConstructorSelectors
+} from '../../services/slices/burgerConstructorSlice';
+import { orderSelectors, resetOrder } from '../../services/slices/orderSlice';
+import { userSelectors } from '../../services/slices/userSlice';
+import { orderBurger } from '../../services/thunk/order';
 
 export const BurgerConstructor: FC = () => {
   /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const constructorBun = useSelector(
+    burgerConstructorSelectors.getBun
+  ) as TConstructorIngredient;
+  const constructorIngredients = useSelector(
+    burgerConstructorSelectors.getIngredients
+  ) as TConstructorIngredient[];
+
   const constructorItems = {
-    bun: {
-      price: 0
-    },
-    ingredients: []
+    bun: constructorBun,
+    ingredients: constructorIngredients
   };
 
-  const orderRequest = false;
-
-  const orderModalData = null;
+  const orderRequestStatus = useSelector(orderSelectors.getOrderRequestStatus);
+  const orderRequest = orderRequestStatus === 'Loading' ? true : false;
+  const orderModalData = useSelector(orderSelectors.getOrder);
+  const user = useSelector(userSelectors.getUser);
 
   const onOrderClick = () => {
+    if (!user) {
+      navigate('/login');
+    }
     if (!constructorItems.bun || orderRequest) return;
+    const ingredientsIds = [
+      constructorBun._id,
+      ...constructorIngredients.map((ingredient) => ingredient._id),
+      constructorBun._id
+    ];
+
+    dispatch(orderBurger(ingredientsIds));
   };
-  const closeOrderModal = () => {};
+  const closeOrderModal = () => {
+    dispatch(resetOrder());
+    dispatch(burgerConstructorActions.resetConstructor());
+  };
 
   const price = useMemo(
     () =>
@@ -29,8 +60,6 @@ export const BurgerConstructor: FC = () => {
       ),
     [constructorItems]
   );
-
-  return null;
 
   return (
     <BurgerConstructorUI
@@ -43,3 +72,10 @@ export const BurgerConstructor: FC = () => {
     />
   );
 };
+
+function resetConstructor(): any {
+  throw new Error('Function not implemented.');
+}
+// function resetConstructor(): any {
+//   throw new Error('Function not implemented.');
+// }
