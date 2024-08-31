@@ -24,9 +24,9 @@ export const orderBurger = createAsyncThunk<TNewOrderResponse, string[]>(
   }
 );
 
-export const getOrderByNumber = createAsyncThunk<TOrderResponse, number>(
+export const getOrderByNumber = createAsyncThunk(
   `${ORDER_SLICE_NAME}/getOrderByNumber`,
-  async (number) => {
+  async (number: number) => {
     const order = await getOrderByNumberApi(number);
     return order;
   }

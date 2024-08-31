@@ -23,7 +23,7 @@ export const OrderInfo: FC = () => {
     dispatch(getOrderByNumber(Number(number)));
   }, [dispatch, number]);
 
-  const order = orders.find((order) => order.number === Number(number));
+  const order = orders.find((order) => order.number == Number(number));
 
   const orderData = order
     ? {
@@ -34,6 +34,7 @@ export const OrderInfo: FC = () => {
         )
       }
     : undefined;
+
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;

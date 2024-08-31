@@ -8,11 +8,13 @@ import { getOrders } from '../../services/thunk/order';
 export const ProfileOrders: FC = () => {
   /** TODO: взять переменную из стора */
   const dispatch = useDispatch();
-  const orders: TOrder[] = useSelector(orderSelectors.getOrders);
 
   useEffect(() => {
     dispatch(getOrders());
   }, []);
+
+  const orders: TOrder[] = useSelector(orderSelectors.getOrders);
+  console.log(orders);
 
   return <ProfileOrdersUI orders={orders} />;
 };

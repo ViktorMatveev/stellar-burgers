@@ -9,7 +9,13 @@ import {
   Register,
   ResetPassword
 } from '@pages';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+  useParams
+} from 'react-router-dom';
 import '../../index.css';
 import styles from './app.module.css';
 
@@ -18,6 +24,8 @@ import { ProtectedRoute } from '../protected-route';
 import { useDispatch } from '../../services/store';
 import { useEffect } from 'react';
 import { getIngredients } from '../../services/thunk/ingredients';
+import { resetOrder } from '../../services/slices/orderSlice';
+import { getUser } from '../../services/thunk/user';
 
 const App = () => {
   const location = useLocation();
@@ -31,6 +39,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(getIngredients());
+    dispatch(getUser());
   }, [dispatch]);
 
   return (
@@ -101,12 +110,18 @@ const App = () => {
         </Route>
         <Route path='*' element={<NotFound404 />} />
       </Routes>
+
       {background && (
         <Routes>
           <Route
             path='/feed/:number'
             element={
-              <Modal title='OrderInfo' onClose={handleModalClose}>
+              <Modal
+                onClose={() => {
+                  dispatch(resetOrder());
+                  handleModalClose();
+                }}
+              >
                 <OrderInfo />
               </Modal>
             }
@@ -114,7 +129,7 @@ const App = () => {
           <Route
             path='/ingredients/:id'
             element={
-              <Modal title='IngredientDetails' onClose={handleModalClose}>
+              <Modal title='Детали ингредиента' onClose={handleModalClose}>
                 <IngredientDetails />
               </Modal>
             }
@@ -122,7 +137,12 @@ const App = () => {
           <Route
             path='/profile/orders/:number'
             element={
-              <Modal title='OrderInfo' onClose={handleModalClose}>
+              <Modal
+                onClose={() => {
+                  dispatch(resetOrder());
+                  handleModalClose();
+                }}
+              >
                 <OrderInfo />
               </Modal>
             }

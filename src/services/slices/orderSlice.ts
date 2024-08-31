@@ -45,6 +45,7 @@ export const orderSlice = createSlice({
       .addCase(orderBurger.fulfilled, (state, action) => {
         state.order = action.payload.order;
         state.orders.push(action.payload.order);
+        state.requestStatus = RequestStatus.Succsess;
       })
       .addCase(getOrderByNumber.pending, (state) => {
         state.requestStatus = RequestStatus.Loading;
@@ -55,6 +56,13 @@ export const orderSlice = createSlice({
       .addCase(getOrderByNumber.fulfilled, (state, action) => {
         state.requestStatus = RequestStatus.Succsess;
         state.order = action.payload.orders[0];
+        const newOrders = action.payload.orders.filter(
+          (order) =>
+            !state.orders.some(
+              (existingOrder) => existingOrder._id === order._id
+            )
+        );
+        state.orders.push(...newOrders);
       });
   },
   selectors: {

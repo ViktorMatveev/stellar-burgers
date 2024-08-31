@@ -3,10 +3,17 @@ import ReactDOM from 'react-dom';
 
 import { TModalProps } from './type';
 import { ModalUI } from '@ui';
+import { useParams } from 'react-router-dom';
 
 const modalRoot = document.getElementById('modals');
 
 export const Modal: FC<TModalProps> = memo(({ title, onClose, children }) => {
+  const param = useParams();
+
+  const modalTitle = param.number
+    ? `#${String(param.number).padStart(6, '0')}`
+    : title;
+
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       e.key === 'Escape' && onClose();
@@ -19,7 +26,7 @@ export const Modal: FC<TModalProps> = memo(({ title, onClose, children }) => {
   }, [onClose]);
 
   return ReactDOM.createPortal(
-    <ModalUI title={title} onClose={onClose}>
+    <ModalUI title={modalTitle} onClose={onClose}>
       {children}
     </ModalUI>,
     modalRoot as HTMLDivElement

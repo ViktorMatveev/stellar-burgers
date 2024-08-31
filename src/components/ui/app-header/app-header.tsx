@@ -31,7 +31,7 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
         <>
           <ListIcon type={'primary'} />
           <NavLink
-            to='profile/orders'
+            to='/feed'
             className={({ isActive }) =>
               `text text_type_main-default ml-2 mr-10 ${
                 styles.link
